@@ -1,0 +1,4 @@
+import os
+
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+print(AWS_STORAGE_BUCKET_NAME)
