@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from .views import (
     PostListView,
     PostDetailView,
@@ -10,6 +10,7 @@ from .views import (
 from . import views
 
 urlpatterns = [
+    path('tinymce/', include('tinymce.urls')),
     path('', PostListView.as_view(), name='blog-home'),
     path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
