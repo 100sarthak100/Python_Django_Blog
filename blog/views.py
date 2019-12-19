@@ -1,7 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404,redirect
+from django .http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from .models import Post
+from .models import Post,Comment
+from .forms import CommentForm
 from tinymce.models import HTMLField
 from django.views.generic import (
     ListView,
@@ -11,7 +14,30 @@ from django.views.generic import (
     DeleteView
 )
 
+@login_required
+def comment_approve(request, pk,):
+    comment = get_object_or_404(Comment, pk=pk)
+    comment.approve()
+    return redirect('post-detail', pk=comment.post.pk)
 
+@login_required
+def comment_remove(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    comment.delete()
+    return redirect('post-detail', pk=comment.post.pk)
+
+def add_comment_to_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('post-detail', pk=post.pk)
+    else:
+        form = CommentForm()
+    return render(request, 'blog/add_comment_to_post.html', {'form': form})
 
 def home(request):
     context = {
@@ -34,6 +60,7 @@ class UserPostListView(ListView):
     context_object_name = 'posts'
     paginate_by = 4
 
+
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Post.objects.filter(author=user).order_by('-date_posted')
@@ -41,7 +68,6 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
-
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post

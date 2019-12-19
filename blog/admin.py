@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post,Comment
 from tinymce.widgets import TinyMCE
 from django.db import models
 
@@ -16,3 +16,4 @@ class Post_Admin(admin.ModelAdmin):
     # }
 
 admin.site.register(Post,Post_Admin)
+admin.site.register(Comment)
