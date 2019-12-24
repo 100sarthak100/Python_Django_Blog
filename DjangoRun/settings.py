@@ -63,6 +63,7 @@ TINYMCE_JS_URL = '//cdn.tinymce.com/4/tinymce.min.js'
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'tinymce',
     'blog.apps.BlogConfig',
     'users.apps.UsersConfig',
